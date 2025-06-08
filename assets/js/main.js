@@ -33,7 +33,6 @@ registerBtn.addEventListener("click", () => {
 
 // Signup & Signin Functionality
 document.addEventListener("DOMContentLoaded", function () {
-    // Get buttons
     const signUpBtn = document.querySelector(".register-form .input-submit");
     const signInBtn = document.querySelector(".login-form .input-submit");
 
@@ -45,9 +44,8 @@ document.addEventListener("DOMContentLoaded", function () {
         let password = document.querySelector(".register-form input[type='password']").value;
 
         if (username && password && email) {
-            localStorage.setItem("savedUsername", username);
-            localStorage.setItem("savedPassword", password);
             alert("Account created successfully!");
+            // You can add backend logic here later to store accounts securely
         } else {
             alert("Please enter all details.");
         }
@@ -59,13 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let enteredUsername = document.querySelector(".login-form input[type='username']").value;
         let enteredPassword = document.querySelector(".login-form input[type='password']").value;
 
-        let savedUsername = localStorage.getItem("savedUsername");
-        let savedPassword = localStorage.getItem("savedPassword");
-
-        if (enteredUsername === savedUsername && enteredPassword === savedPassword) {
-            window.location.href = "https://host-bloodcloud.github.io/home";
-        } else {
-            alert("Incorrect username or password!");
-        }
+        // Since no saved data, just alert failure
+        alert("Login feature disabled - no account storage available.");
     });
 });
