@@ -3,8 +3,47 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Error & Success Messages + Redirect Loader</title>
+<title>Login Page with Firebase Auth & Redirect</title>
 <style>
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin: 0; padding: 20px;
+    background: #f5f5f5;
+  }
+
+  form {
+    max-width: 300px;
+    margin: 60px auto;
+    padding: 25px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ccc;
+  }
+
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 8px 10px;
+    margin: 12px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+
+  button {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    font-size: 16px;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+
   /* Error message */
   .error {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -143,17 +182,24 @@
 </head>
 <body>
 
+<form id="loginForm" autocomplete="off">
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <button type="submit">Log In</button>
+</form>
+
 <!-- Error message -->
 <div id="errorMessage" class="error" style="display:none;">
   <div class="error__icon">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <path fill="#393a37" d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z"/>
+      <path fill="#fff" d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z"/>
     </svg>
   </div>
   <div class="error__title" id="errorText">Username/Password is incorrect!</div>
   <div class="error__close" onclick="hideError()">
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-      <path fill="#393a37" d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"/>
+      <path fill="#fff" d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"/>
     </svg>
   </div>
 </div>
@@ -162,13 +208,13 @@
 <div id="successMessage" class="success" style="display:none;">
   <div class="success__icon">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <path fill-rule="evenodd" fill="#393a37" d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z"/>
+      <path fill-rule="evenodd" fill="#393A37" d="m12 1c-6.075 0-11 4.925-11 11s4.925 11 11 11 11-4.925 11-11-4.925-11-11-11zm4.768 9.14c.0878-.1004.1546-.21726.1966-.34383.0419-.12657.0581-.26026.0477-.39319-.0105-.13293-.0475-.26242-.1087-.38085-.0613-.11844-.1456-.22342-.2481-.30879-.1024-.08536-.2209-.14938-.3484-.18828s-.2616-.0519-.3942-.03823c-.1327.01366-.2612.05372-.3782.1178-.1169.06409-.2198.15091-.3027.25537l-4.3 5.159-2.225-2.226c-.1886-.1822-.4412-.283-.7034-.2807s-.51301.1075-.69842.2929-.29058.4362-.29285.6984c-.00228.2622.09851.5148.28067.7034l3 3c.0983.0982.2159.1748.3454.2251.1295.0502.2681.0729.4069.0665.1387-.0063.2747-.0414.3991-.1032.1244-.0617.2347-.1487.3236-.2554z"/>
     </svg>
   </div>
-  <div class="success__title">You have successfully logged in</div>
+  <div class="success__title" id="successText">You have successfully logged in</div>
   <div class="success__close" onclick="hideSuccess()">
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-      <path fill="#393a37" d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"/>
+      <path fill="#393A37" d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"/>
     </svg>
   </div>
 </div>
@@ -179,21 +225,65 @@
   <div class="loading"></div>
 </div>
 
-<!-- Demo buttons to test -->
-<div style="margin: 50px;">
-  <button onclick="demoShowError()">Show Error</button>
-  <button onclick="demoShowSuccess()">Show Success + Redirect</button>
-</div>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
-  // Show error message with optional custom text
+  // Your Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0ioBxdNUYuK3pPp66vFgLRa7Cx1b81bc",
+    authDomain: "meowsamai.firebaseapp.com",
+    projectId: "meowsamai",
+    storageBucket: "meowsamai.firebasestorage.app",
+    messagingSenderId: "753119760156",
+    appId: "1:753119760156:web:cb0165af9028ca98d2b4d9",
+    measurementId: "G-VQ9Q8FNL7R"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  const loginForm = document.getElementById("loginForm");
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    hideError();
+    hideSuccess();
+    hideLoader();
+
+    const email = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    try {
+      // Firebase sign in
+      await auth.signInWithEmailAndPassword(email, password);
+
+      // Show success message
+      showSuccess("You have successfully logged in");
+
+      // After 3 seconds, hide success, show loader and redirect
+      setTimeout(() => {
+        hideSuccess();
+        showLoader();
+        setTimeout(() => {
+          window.location.href = "https://www.example.com"; // Change redirect URL here
+        }, 3000);
+      }, 3000);
+
+    } catch (error) {
+      // On error show error message
+      showError(error.message || "Username or password is incorrect!");
+    }
+  });
+
+  // Show error message
   function showError(message = "Username/Password is incorrect!") {
     const errorDiv = document.getElementById('errorMessage');
     const errorText = document.getElementById('errorText');
     errorText.textContent = message;
     errorDiv.style.display = 'flex';
 
-    // Auto hide error after 5s
     clearTimeout(showError.timeoutId);
     showError.timeoutId = setTimeout(() => {
       hideError();
@@ -210,7 +300,8 @@
   // Show success message
   function showSuccess(message = "You have successfully logged in") {
     const successDiv = document.getElementById('successMessage');
-    successDiv.querySelector('.success__title').textContent = message;
+    const successText = document.getElementById('successText');
+    successText.textContent = message;
     successDiv.style.display = 'flex';
   }
 
@@ -228,28 +319,6 @@
   // Hide redirect loader
   function hideLoader() {
     document.getElementById('redirectLoader').style.display = 'none';
-  }
-
-  // Call this after successful login to show success + redirect after 3s
-  function successAndRedirect(url = 'https://example.com') {
-    hideError();
-    showSuccess();
-    // After 3 seconds, hide success, show loader, then redirect after another 3 seconds
-    setTimeout(() => {
-      hideSuccess();
-      showLoader();
-      setTimeout(() => {
-        window.location.href = url;
-      }, 3000);
-    }, 3000);
-  }
-
-  // Demo handlers
-  function demoShowError() {
-    showError("Invalid username or password!");
-  }
-  function demoShowSuccess() {
-    successAndRedirect('https://www.google.com');
   }
 </script>
 
